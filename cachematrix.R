@@ -5,9 +5,12 @@
 ## The project consists of 2 main functions and an utility function.
 ## makeCacheMatrix creates a list with the data needed to cache the result
 ## of calculating an inverse matrix.
+##
 ## cacheSolve takes the list created in makeCacheMatrix and verifies if the
 ## inverse has been calculated, if so then returns the cached result, if no
 ## the inverse is calculated.
+##
+## verify_time only logs the time elpased.
 ##
 ## Is assumed that the matrix received is not a singular matrix and thus can
 ## be inverted.
@@ -45,32 +48,32 @@
 ##  the matrix and its inverse. The list resembles an object with the 
 ##  functions stored in the list acting as methods.
 
-makeCacheMatrix <- function(cached_matrix = matrix()) {
+makeCacheMatrix <- function(originalMatrix = matrix()) {
   
   # First asigns the initial value of the matrix as NULL
-  inverse_matrix <- NULL 
+  inverseMatrix <- NULL 
   
   set <- function(aMatrix){
     # The matrix is set and the inverse matrix is also reset because
     # it does not corresponds to current computation of the matrix
     # that is being passed in. We use the super assignment operator to work 
     # with the parent environment not the environment inside this function.
-    cached_matrix <<- aMatrix
-    inverse_matrix <<-NULL
+    originalMatrix <<- aMatrix
+    inverseMatrix <<-NULL
   }
   
   get <- function(){
-    cached_matrix
+    originalMatrix
   }
   
   setInverse <- function(inverse){
     #  I use the super assigment operator to set inverse_matrix in the parent
     #  environment.
-    inverse_matrix <<- inverse
+    inverseMatrix <<- inverse
   }
   
   getInverse <- function(){
-    inverse_matrix
+    inverseMatrix
   }
   
   # Returns the list with the functions above listed.
@@ -89,19 +92,19 @@ cacheSolve <- function(x, ...) {
   # Gets the inverse
   inverse <- x$getInverse()
   
+  #If the inverse does exist return the cached value.
   if(! is.null(inverse)){
-    
     # Logs the time elapsed.
     log_time()
-    
+    print("returns cached value.")
     ## Return a matrix that is the inverse of 'x'.
     return(inverse)
   }
   
+  #If the inverse does not exist calculate the inverse and set it in the special
+  #list
   data <- x$get()
-  
   inverse <- solve(data)
-  
   x$setInverse(inverse)
   
   # Logs the time elapsed.
